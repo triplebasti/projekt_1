@@ -1,0 +1,25 @@
+
+
+<input type="text" id="login" placeholder="Login">
+<input type="password" id="password" placeholder="password">
+<button type="button" id="senden" >Senden</button>
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#senden").click(function(){
+		$.post('login/controll', {data: {login: $('#login').val(), Password:$('#password').val()}}).success(function(r){
+			
+			});
+	
+		})
+})
+</script>
