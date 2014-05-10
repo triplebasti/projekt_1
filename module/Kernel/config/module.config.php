@@ -44,6 +44,16 @@ return array(
         						)
         				)
         		),
+        		'loginarea' => array(
+        				'type' => 'Zend\Mvc\Router\Http\Literal',
+        				'options' => array(
+        						'route' => '/login/area',
+        						'defaults' => array(
+        								'controller' => 'Kernel\Controller\Kernel',
+        								'action' => 'loginarea',
+        						)
+        				)
+        		),
 
 
 

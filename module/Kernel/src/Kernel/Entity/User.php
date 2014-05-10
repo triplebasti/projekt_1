@@ -14,7 +14,6 @@ use Doctrine\Common\Collections\Collection;
  *
  * @property int $UserId
  * @property string $Login
- * @property int $Right
  * @property string $Password
  */
 
@@ -39,11 +38,7 @@ class User
 
     protected $Password;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
 
-    protected $Rightkey;
     
     public function getUserId()
     {
@@ -68,14 +63,7 @@ class User
     	return $this->Password;
     }
     
-    /**
-     *
-     * @return the $Lastname
-     */
-    public function getRightkey()
-    {
-    	return $this->Rightkey;
-    }
+
 
     public function setLogin($Login)
     {
@@ -89,14 +77,5 @@ class User
     public function setPassword($Password)
     {
     	$this->Password = $Password;
-    }
-    
-    
-    public function setRightkey($Right)
-    {
-    	$this->Rightkey = $Right;
-    }
-    
-
-   
+    }  
 }
