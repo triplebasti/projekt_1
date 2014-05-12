@@ -26,11 +26,12 @@ class KernelController extends AbstractActionController
 		
 	}
 	
-	public function controllAction(){
+	public function controllNewAccAction(){
 		$post = $this->getRequest()->getPost();
 		$returnArray = array();
+		$api = new \Kernel\Model\KernelAPI($this->getServiceLocator());
 		if(isset($post['data']['login'])){
-			$returnArray['Check'] = true;
+			$returnArray = $api->createNewAcc($post['data']);
 		}
 		return new JsonModel($returnArray);
 	}
@@ -39,7 +40,10 @@ class KernelController extends AbstractActionController
 		if(!isset($_SESSION['Userid'])){
 			return $this->redirect()->toRoute('login');
 		}else{
-			
+			$returnArray = array();
+			$api = new \Kernel\Model\KernelAPI($this->getServiceLocator());
+			$returnArray = $api->getUserInformationForView();
+			return $returnArray;
 		}
 	}
 

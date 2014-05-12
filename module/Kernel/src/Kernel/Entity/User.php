@@ -15,6 +15,9 @@ use Doctrine\Common\Collections\Collection;
  * @property int $UserId
  * @property string $Login
  * @property string $Password
+ * @property string $Vorname
+ * @property string $Nachname
+ * @property int TempStatus
  */
 
 class User
@@ -37,8 +40,39 @@ class User
      */
 
     protected $Password;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
+    
+    protected $Vorname;
+    
+    /**
+     * @ORM\Column(type="string")
+     */
+    
+    protected $Nachname;
+    
+    /**
+     * @ORM\Column(type="integer")
+     */
+    
+    protected $TempStatus;
 
-
+    public function getVorname()
+    {
+    	return $this->Vorname;
+    }
+    
+    public function getNachname()
+    {
+    	return $this->Nachname;
+    }
+    
+    public function getTempStatus()
+    {
+    	return $this->TempStatus;
+    }
     
     public function getUserId()
     {
@@ -77,5 +111,21 @@ class User
     public function setPassword($Password)
     {
     	$this->Password = $Password;
-    }  
+    } 
+    
+    public function setVorname($Vorname)
+    {
+    	$this->Vorname = $Vorname;
+    }
+    
+    public function setNachname($Nachname)
+    {
+    	$this->Nachname = $Nachname;
+    }
+    
+    public function setTempStatus($TempStatus)
+    {
+    	$this->TempStatus = $TempStatus;
+    }
+     
 }

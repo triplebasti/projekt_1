@@ -34,13 +34,13 @@ return array(
                     )
                 )
             ),
-        		'controlllogin' => array(
+        		'controllNewAcc' => array(
         				'type' => 'Zend\Mvc\Router\Http\Literal',
         				'options' => array(
-        						'route' => '/login/controll',
+        						'route' => '/login/controllNewAcc',
         						'defaults' => array(
         								'controller' => 'Kernel\Controller\Kernel',
-        								'action' => 'controll',
+        								'action' => 'controllNewAcc',
         						)
         				)
         		),

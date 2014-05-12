@@ -1,25 +1,60 @@
 
 <form method="post">
 <input type="text" name='login' id="login" placeholder="Login">
-<input type="password" name='password' id="password" placeholder="password">
+<input type="password" name='password' id="password" placeholder="password"><br>
 <button type="submit" id="senden" >Anmelden</button>
 </form>
+<button type="button" id="regis_button">Registieren</button>
 
 
-
-
-
-
-
-
+<div id="dialog" title="Registierung">
+<input type="text" name='login' id="login_regi" placeholder="Login"><br>
+<input type="text" name='login' id="vorname_regi" placeholder="Vorname"><br>
+<input type="text" name='login' id="nachname_regi" placeholder="Nachname"><br>
+<input type="password" name='login' id="pw1_regi" placeholder="Passwort"><br>
+<input type="password" name='login' id="pw2_regi" placeholder="Passwort bestaetigen"><br>
+<button type="button" id="senden_regi" >Senden</button>
+<button type="button" id="new_regi" >Zuruecksetzen</button>
+</div>
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$("#senden").click(function(){
-		$.post('login/controll', {data: {login: $('#login').val(), Password:$('#password').val()}}).success(function(r){
-			
-			});
-	
+	$( "#dialog" ).dialog({
+		autoOpen: false,
+		show: {
+			effect: "blind",
+			duration: 1000
+		},
+		hide: {
+			effect: "explode",
+			duration: 1000
+		}
+	});
+	 $('#pw2_regi').click(function(){
+		 $('#pw2_regi').css('background-color','white');
+		 });
+	$( "#regis_button" ).click(function() {
+		$( "#dialog" ).dialog( "open" );
+	});
+	$("#senden_regi").click(function(){
+		var pw1 = $('#pw1_regi').val();
+		var pw2 = $('#pw2_regi').val();
+		if(pw1 != pw2){
+			 $('#pw2_regi').css('background-color','red');
+			}else{
+				
+				$.post('login/controllNewAcc', {data: {
+					login: $('#login_regi').val(), 
+					password:$('#pw1_regi').val(), 
+					vorname:$('#vorname_regi').val(),
+					nachname:$('#nachname_regi').val()
+					}}).success(function(r){
+						alert(r['message']);
+						if(r['check']){
+							$( "#dialog" ).dialog( "close" );
+						}	
+					});
+				}
 		})
 })
 </script>
