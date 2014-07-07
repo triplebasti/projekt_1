@@ -47,4 +47,19 @@ class KernelController extends AbstractActionController
 		}
 	}
 
+    public function controllAdminForUserAction(){
+        $post = $this->getRequest()->getPost();
+        if (isset($post['data']['index']) && $post['data']['index'] == 1) {
+            $api = new \Kernel\Model\KernelAPI($this->getServiceLocator());
+            $returnArray = $api->findAllUser();
+        }
+        if (isset($post['data']['index']) && $post['data']['index'] == 2) {
+            $api = new \Kernel\Model\KernelAPI($this->getServiceLocator());
+            $returnArray = $api->changeStatus($post['data']['id']);
+        }
+        return new JsonModel($returnArray);
+
+
+    }
+
 }

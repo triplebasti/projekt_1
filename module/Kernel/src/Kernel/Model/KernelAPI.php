@@ -64,7 +64,7 @@ class KernelAPI
 	}
 	
 	public function handleTags($input){
-		//Später
+		//Spï¿½ter
 	}
 	public function checkLogin($login){
 		$user = $this->_objectManager->getRepository('Kernel\Entity\User')->findoneby(array('Login'=>$login));
@@ -80,4 +80,39 @@ class KernelAPI
 		return $array;
 		
 	}
+
+    public function findAllUser(){
+        $returnArray = array();
+        $i = 1;
+        $user = $this->_objectManager->getRepository('Kernel\Entity\User')->findAll();
+        foreach($user as $singleUser){
+            $returnArray['user'][$i]['id'] = $singleUser->getUserId();
+            $returnArray['user'][$i]['vorname'] = $singleUser->getVorname();
+            $returnArray['user'][$i]['nachname'] = $singleUser->getNachname();
+            $returnArray['user'][$i]['tempStatus'] = $singleUser->getTempStatus();
+            $i++;
+        }
+        $returnArray['size'] = $i;
+        $returnArray['check'] = true;
+        return $returnArray;
+    }
+
+    public function changeStatus($id){
+        $returnArray = array();
+        $user = $this->_objectManager->getRepository('Kernel\Entity\User')->find($id);
+        if(isset($user)){
+            if($user->getTempStatus() == 1){
+                $user->setTempStatus(0);
+                $returnArray['status'] = true;
+            } else  {
+                $user->setTempStatus(1);
+                $returnArray['status'] = false;
+            }
+            $this->_objectManager->persist($user);
+            $this->_objectManager->flush();
+            $returnArray['check'] = true;
+        }
+        return $returnArray;
+
+    }
 }

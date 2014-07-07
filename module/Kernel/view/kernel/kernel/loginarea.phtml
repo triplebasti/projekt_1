@@ -1,0 +1,96 @@
+<div><h3>Willkommen</h3><h4><?php echo $this->vorname.' ' .$this->nachname ?></h4></div>
+
+<ul id='menu'>
+    <li>Admin
+        <ul>
+            <li><span id="admin_user">Nutzerverwaltung</span></li>
+        </ul>
+    </li>
+    <li>
+        Nutzer
+        <ul>
+            <li>Eigene Einstellungen</li>
+        </ul>
+    </li>
+</ul>
+<div id="content_Admin" TITLE="Nutzerverwaltung" style="width: 500px"></div>
+<style>
+    .ui-menu { width: 150px; }
+</style>
+
+<script>
+
+    $(document).ready(function(){
+        $( "#content_Admin" ).dialog({
+            width: 500,
+            autoOpen: false,
+            show: {
+                effect: "blind",
+                duration: 100
+            },
+            hide: {
+                effect: "explode",
+                duration: 100
+
+            }
+        });
+
+        $('#admin_user').click(function(){
+            $.post('/login/controllAdminForUser', {data: {
+                index: 1
+            }}).success(function(r){
+                if (r['check']) {
+                    var string = '<div>';
+                    string += '<table border="1" id="adminTable" style="width:100%">'
+                    string += '<tr>'
+                    string += '<th>Id</th>'
+                    string += '<th>Vorname</th>'
+                    string += '<th>Nachname</th>'
+                    string += '<th>TempStatus</th>'
+                    string += '</tr>'
+                    for(var i=1;i<r['size'];i++){
+                        string += '<tr>'
+                        string += '<td>' + r['user'][i]['id'] + '</td>'
+                        string += '<td>' + r['user'][i]['vorname'] + '</td>'
+                        string += '<td>' + r['user'][i]['nachname'] + '</td>'
+                        string += '<td>'
+                        string += '<select class="admin_aktiveStatus" style="width: 100%">'
+                        if (r['user'][i]['tempStatus']==0) {
+                            string += '<option>Aktiv</option>';
+                            string += '<option>inAktiv</option>';
+                        } else {
+                            string += '<option>inAktiv</option>';
+                            string += '<option>Aktiv</option>';
+                        }
+                        string += '</select>'
+                        string += '</td>'
+
+                        string += '</tr>'
+                    }
+                    string += '</table>'
+                    string +='</div>';
+
+                    $('#content_Admin').html(string);
+                    $( "#content_Admin" ).dialog( "open" );
+                    $('.admin_aktiveStatus').change(function(){
+                        var information = $(this).parent().siblings();
+                        $.post('/login/controllAdminForUser', {data: {
+                            index: 2,
+                            id: $(information[0]).html()
+                        }}).success(function(r){
+                            if(r['check']){
+                                if(r['status']){
+                                    $(information).css('background-color','green');
+                                } else {
+                                    $(information).css('background-color','yellow');
+                                }
+                            }
+                        })
+
+                    })
+                }
+            });
+        })
+
+    })
+</script>
