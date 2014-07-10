@@ -66,6 +66,17 @@ return array(
                 )
             ),
 
+            'controllUserForUser' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/login/controllUserForUser',
+                    'defaults' => array(
+                        'controller' => 'Kernel\Controller\Kernel',
+                        'action' => 'controllUserForUser',
+                    )
+                )
+            ),
+
 
 
 

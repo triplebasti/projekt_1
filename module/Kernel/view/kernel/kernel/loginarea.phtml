@@ -9,11 +9,12 @@
     <li>
         Nutzer
         <ul>
-            <li>Eigene Einstellungen</li>
+            <li><span id="user_user">Eigene Einstellungen</span></li>
         </ul>
     </li>
 </ul>
 <div id="content_Admin" TITLE="Nutzerverwaltung" style="width: 500px"></div>
+<div id="content_User" TITLE="Eigene Einstellungen" style="width: 500px"></div>
 <style>
     .ui-menu { width: 150px; }
 </style>
@@ -23,6 +24,20 @@
     $(document).ready(function(){
         $( "#content_Admin" ).dialog({
             width: 500,
+            autoOpen: false,
+            show: {
+                effect: "blind",
+                duration: 100
+            },
+            hide: {
+                effect: "explode",
+                duration: 100
+
+            }
+        });
+
+        $( "#content_User" ).dialog({
+            width: 350,
             autoOpen: false,
             show: {
                 effect: "blind",
@@ -47,6 +62,7 @@
                     string += '<th>Vorname</th>'
                     string += '<th>Nachname</th>'
                     string += '<th>TempStatus</th>'
+                    string += '<th>Rechte</th>'
                     string += '</tr>'
                     for(var i=1;i<r['size'];i++){
                         string += '<tr>'
@@ -61,6 +77,17 @@
                         } else {
                             string += '<option>inAktiv</option>';
                             string += '<option>Aktiv</option>';
+                        }
+                        string += '</select>'
+                        string += '</td>'
+                        string += '<td>'
+                        string += '<select class="admin_rightStatus" style="width: 100%">'
+                        if (r['user'][i]['rights']==0) {
+                            string += '<option>Member</option>';
+                            string += '<option>Admin</option>';
+                        } else {
+                            string += '<option>Admin</option>';
+                            string += '<option>Member</option>';
                         }
                         string += '</select>'
                         string += '</td>'
@@ -88,8 +115,115 @@
                         })
 
                     })
+                    $('.admin_rightStatus').change(function(){
+                        var information = $(this).parent().siblings();
+                        $.post('/login/controllAdminForUser', {data: {
+                            index: 3,
+                            id: $(information[0]).html()
+                        }}).success(function(r){
+                            if(r['check']){
+                                if(r['status']){
+                                    $(information).css('background-color','blue');
+                                } else {
+                                    $(information).css('background-color','white');
+                                }
+                            }
+                        })
+
+                    })
                 }
             });
+        })
+        $('#user_user').click(function(){
+            $.post('/login/controllUserForUser', {data: {
+                index: 1
+            }}).success(function(r){
+                var string = '<div>'
+                string += '<table border="1" style="width: 75%">';
+                string += '<tr>'
+                string += '<th>Attribute</th>'
+                string += '<th>Daten</th>'
+                string += '</tr>'
+                string += '<tr>'
+                string += '<td>ID</td>'
+                string += '<td>'+r['id']+'</td>'
+                string += '</tr>'
+                string += '<tr>'
+                string += '<td>Login</td>'
+                string += '<td>'+r['login']+'</td>'
+                string += '</tr>'
+                string += '<tr>'
+                string += '<td>Vorname</td>'
+                string += '<td>'+r['vorname']+'</td>'
+                string += '</tr>'
+                string += '<tr>'
+                string += '<td>Nachname</td>'
+                string += '<td>'+r['nachname']+'</td>'
+                string += '</tr>'
+                string += '<tr>'
+                string += '<td>Rolle</td>'
+                if(r['rights']== 1){
+                    string += '<td>Admin</td>'
+                } else {
+                    string += '<td>Member</td>'
+                }
+                string += '</tr>'
+                string += '</table>'
+                string += '<input type="button" id="change_UserInformation" value="Ändern">'
+                string += '</div>'
+                string += '<div id="changeData"></div>'
+                $('#content_User').html(string);
+                $( "#content_User" ).dialog( "open" );
+                $('#change_UserInformation').click(function(){
+                var changestring = '';
+                    changestring += '<table border="1" style="width: 75%">';
+                    changestring += '<tr>'
+                    changestring += '<th>Attribute</th>'
+                    changestring += '<th>Daten</th>'
+                    changestring += '</tr>'
+                    changestring += '<tr>'
+                    changestring += '<td>Vorname</td>'
+                    changestring += '<td><input type="text" id="newVorname"></td>'
+                    changestring += '</tr>'
+                    changestring += '<tr>'
+                    changestring += '<td>Nachname</td>'
+                    changestring += '<td><input type="text" id="newNachname"></td>'
+                    changestring += '</tr>'
+                    changestring += '<tr>'
+                    changestring += '<td>Neues Passwort</td>'
+                    changestring += '<td><input type="password" id="newPw1"></td>'
+                    changestring += '</tr>'
+                    changestring += '<tr>'
+                    changestring += '<td>Passwort bestätigen</td>'
+                    changestring += '<td><input type="password" id="newPw2"></td>'
+                    changestring += '</tr>'
+                    changestring += '</table>'
+                    changestring += '<input type="button" id="save" value="Speichern">'
+                    $('#changeData').html(changestring);
+                    $('#save').click(function(){
+                        var pw1 = $('#newPw1').val();
+                        var pw2 = $('#newPw2').val();
+                        if(pw1 != pw2){
+                            $('#newPw2').css('background-color','red');
+                            $('#newPw2').click(function(){
+                                $(this).css('background-color','white');
+                            })
+                        } else {
+                            $.post('/login/controllUserForUser', {data: {
+                                index: 2,
+                                vorname: $('#newVorname').val(),
+                                nachname: $('#newNachname').val(),
+                                pw: pw1
+                            }}).success(function(r){
+                                alert(r['message']);
+                                if(r['check']){
+                                    $( "#content_User" ).dialog( "close" );
+                                }
+                            })
+                        }
+                    })
+                })
+            })
         })
 
     })

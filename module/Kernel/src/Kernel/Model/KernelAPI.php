@@ -53,6 +53,7 @@ class KernelAPI
 			$newAcc->setVorname($array['vorname']);
 			$newAcc->setNachname($array['nachname']);
 			$newAcc->setTempStatus(1);
+            $newAcc->setRights(0);
 			$this->_objectManager->persist($newAcc);
 			$this->_objectManager->flush();
 			$this->_messageArrayForLoginStuff['check'] = true;
@@ -90,6 +91,7 @@ class KernelAPI
             $returnArray['user'][$i]['vorname'] = $singleUser->getVorname();
             $returnArray['user'][$i]['nachname'] = $singleUser->getNachname();
             $returnArray['user'][$i]['tempStatus'] = $singleUser->getTempStatus();
+            $returnArray['user'][$i]['rights'] = $singleUser->getRights();
             $i++;
         }
         $returnArray['size'] = $i;
@@ -114,5 +116,73 @@ class KernelAPI
         }
         return $returnArray;
 
+    }
+
+    public function changeRight($id){
+        $returnArray = array();
+        $user = $this->_objectManager->getRepository('Kernel\Entity\User')->find($id);
+        if(isset($user)){
+            if($user->getRights() == 0){
+                $user->setRights(1);
+                $returnArray['status'] = true;
+            } else  {
+                $user->setRights(0);
+                $returnArray['status'] = false;
+            }
+            $this->_objectManager->persist($user);
+            $this->_objectManager->flush();
+            $returnArray['check'] = true;
+        }
+        return $returnArray;
+
+    }
+
+    public function checkAdminRights(){
+        $id = $_SESSION['Userid'];
+        $user = $this->_objectManager->getRepository('Kernel\Entity\User')->find($id);
+        if($user->getRights() == 1){
+            return true;
+        }
+    }
+    public function getAllUserInformation(){
+        $user = $this->_objectManager->getRepository('Kernel\Entity\User')->find($_SESSION['Userid']);
+        $returnArray = array();
+        $returnArray['id'] = $user->getUserId();
+        $returnArray['login'] = $user->getLogin();
+        $returnArray['vorname'] = $user->getVorname();
+        $returnArray['nachname'] = $user->getNachname();
+        $returnArray['rights'] = $user->getrights();
+        return $returnArray;
+    }
+
+    public function changeUserInformation($post){
+        $user = $this->_objectManager->getRepository('Kernel\Entity\User')->find($_SESSION['Userid']);
+        $returnArray = array();
+        $returnArray['message'] = '';
+        if (!empty($post['vorname'])) {
+            $user->setVorname($post['vorname']);
+            $count = 1;
+            $returnArray['message'] .= 'Vorname ';
+        }
+        if (!empty($post['nachname'])) {
+            $user->setNachname($post['nachname']);
+            $count = 1;
+            $returnArray['message'] .= 'Nachname ';
+        }
+        if (!empty($post['pw'])) {
+            $user->setPassword($post['pw']);
+            $returnArray['message'] .= 'Password ';
+            $count = 1;
+        }
+        if ($count == 1) {
+            $returnArray['check'] = true;
+            $returnArray['message'] .= 'wurde/n erfolgreich geändert';
+            $this->_objectManager->persist($user);
+            $this->_objectManager->flush();
+        } else {
+            $returnArray['check'] = false;
+            $returnArray['message'] = 'Keine Änderrung vorgenommen';
+        }
+        return $returnArray;
     }
 }

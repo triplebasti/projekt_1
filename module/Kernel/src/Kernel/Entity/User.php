@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\Collection;
  * @property string $Vorname
  * @property string $Nachname
  * @property int TempStatus
+ * @property int Rights
  */
 
 class User
@@ -58,6 +59,12 @@ class User
      */
     
     protected $TempStatus;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+
+    protected $Rights;
 
     public function getVorname()
     {
@@ -127,5 +134,23 @@ class User
     {
     	$this->TempStatus = $TempStatus;
     }
+
+    /**
+     * @param mixed $Rights
+     */
+    public function setRights($Rights)
+    {
+        $this->Rights = $Rights;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRights()
+    {
+        return $this->Rights;
+    }
+
+
      
 }
