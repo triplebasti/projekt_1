@@ -12,7 +12,7 @@
 <div id="messanger" title="Messanger">
 <div id="verlauf" style="width: 80%;height: 50%;margin-top: 20px;margin-left: 40px;margin-right: 40px;background-color: #dcdcdc"></div>
 <div><textarea id="writenNewMessage" style="resize:none;position: relative;bottom: -30px;left: 40px;width: 80%;height: 110px"></textarea></div>
-<button style="width: 80%; height: 30px;margin-left: 40px;position: relative; bottom: -32px">Senden</button>
+<button id="sendMessageButton"style="width: 80%; height: 30px;margin-left: 40px;position: relative; bottom: -32px">Senden</button>
 
 </div>
 <script>
@@ -45,7 +45,7 @@ $(document).ready(function(){
             var string = ' ';
             for(var i = 0;i<r['counter'];i++){
 
-                string += '<span class="aktiveUserForChat" id='+r[i]['id']+'>'
+                string += '<span class="aktiveUserForChat" id="User_'+r[i]['id']+'">'
                 string += r[i]['vorname']
                 string += ' '
                 string += r[i]['nachname']
@@ -58,7 +58,18 @@ $(document).ready(function(){
 
     function startClickEvent(){
         $('.aktiveUserForChat').click(function(){
-            console.log($(this).prop('id'));
+            var idString = $(this).prop('id');
+            var id = idString.split('_');
+            var r = [];
+            r['id'] = 0;
+            r['empfaengerId'] = id[1];
+            $( "#messanger" ).dialog( "open" );
+            $('#sendMessageButton').unbind('click');
+            $('#sendMessageButton').click(function(){
+                setNewMessages(r);
+            })
+
+
         })
 
     }
@@ -102,9 +113,27 @@ $(document).ready(function(){
                 $('#verlauf').html(verlaufstring);
                 $( "#messanger" ).dialog( "open" );
                 getNewMessages();
+                $('#sendMessageButton').unbind('click');
+                $('#sendMessageButton').click(function(){
+                    setNewMessages(r);
+                })
+
             })
 
         })
+    }
+    function setNewMessages(r){
+        var oldString = $('#verlauf').html();
+        var inputString = $('#writenNewMessage').val();
+        var newString = oldString;
+        newString += '<p>DU: '+ inputString+'</p>';
+        $('#writenNewMessage').val('');
+        $('#verlauf').html(newString);
+        $.post('/login/chatroom/setMessage', {data: {
+            id: r['id'],
+            empfaenger: r['empfaengerId'],
+            message: inputString
+        }})
     }
 
 

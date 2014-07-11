@@ -57,10 +57,23 @@ class ChatAPI
         $returnArray['vorname'] = $sender->getVorname();
         $returnArray['nachname'] = $sender->getNachname();
         $returnArray['message'] = $messageObject->getNachricht();
+        $returnArray['id'] = $messageObject->getChatId();
+        $returnArray['empfaengerId'] = $messageObject->getSenderId();
         $messageObject->setRead('1');
         $this->_objectManager->persist($messageObject);
         $this->_objectManager->flush();
         return $returnArray;
 
+    }
+
+    public function setMessage($array){
+        $newMessage = new \Kernel\Entity\Chat();
+        $newMessage->setEmpfaengerId($array['empfaenger']);
+        $newMessage->setSenderId($_SESSION['Userid']);
+        $newMessage->setNachricht($array['message']);
+        $newMessage->setParrentId($array['id']);
+        $newMessage->setRead(0);
+        $this->_objectManager->persist($newMessage);
+        $this->_objectManager->flush();
     }
 }

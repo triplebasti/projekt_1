@@ -57,6 +57,16 @@ return array(
                     )
                 )
             ),
+            'chatSetMessage' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/login/chatroom/setMessage',
+                    'defaults' => array(
+                        'controller' => 'Chat\Controller\Chat',
+                        'action' => 'controllsetMessage',
+                    )
+                )
+            ),
 
         )
     ),
