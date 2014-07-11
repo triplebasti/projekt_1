@@ -77,6 +77,17 @@ return array(
                 )
             ),
 
+            'controllForLogout' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/login/controllForLogout',
+                    'defaults' => array(
+                        'controller' => 'Kernel\Controller\Kernel',
+                        'action' => 'controllForLogout',
+                    )
+                )
+            ),
+
 
 
 

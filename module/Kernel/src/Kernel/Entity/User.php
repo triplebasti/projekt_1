@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
  * @property string $Nachname
  * @property int TempStatus
  * @property int Rights
+ * @property int Online
  */
 
 class User
@@ -65,6 +66,12 @@ class User
      */
 
     protected $Rights;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+
+    protected $Online;
 
     public function getVorname()
     {
@@ -149,6 +156,22 @@ class User
     public function getRights()
     {
         return $this->Rights;
+    }
+
+    /**
+     * @param mixed $Online
+     */
+    public function setOnline($Online)
+    {
+        $this->Online = $Online;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOnline()
+    {
+        return $this->Online;
     }
 
 

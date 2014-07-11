@@ -1,0 +1,77 @@
+<a href="/login/area">Zurück</a><br>
+<div style="position: absolute">
+<span>Nutzer Online</span>
+<div id="onlineArea" style="background-color: greenyellow;width:200px;height:300px">
+</div>
+</div>
+<span id="loadNewMessage" style="position: absolute;left: 600px;top: 60px">Neue Nachrichten Abrufen</span>
+<div  id="newMessageDiv" style="position: absolute;left: 600px;background-color: cornflowerblue">
+<tab><span>Neue Nachrichten:</span> <span id="showNumber">0</span></tab>
+</div>
+<script>
+$(document).ready(function(){
+
+    var myVar = setInterval(function(){searchOnlineUser()}, 5000);
+
+    $('#loadNewMessage').click(function(){
+        getNewMessages();
+    })
+    function searchOnlineUser(){
+        $.post('/login/chatroom/controllUser', {data: {
+        }}).success(function(r){
+            var string = ' ';
+            for(var i = 0;i<r['counter'];i++){
+
+                string += '<span class="aktiveUserForChat" id='+r[i]['id']+'>'
+                string += r[i]['vorname']
+                string += ' '
+                string += r[i]['nachname']
+                string += '</span><br>'
+            }
+            $('#onlineArea').html(string);
+            startClickEvent();
+        })
+    }
+
+    function startClickEvent(){
+        $('.aktiveUserForChat').click(function(){
+            console.log($(this).prop('id'));
+        })
+
+    }
+    function getNewMessages(){
+        $.post('/login/chatroom/NewMessage', {data: {
+        }}).success(function(r){
+            $('#showNumber').html(r['count']);
+            if(r['count']>0){
+                $('#showNumber').css('background-color','yellow');
+                showVorschauNewMessage(r);
+            } else {
+                $('#showNumber').css('background-color','cornflowerblue');
+            }
+        });
+    }
+    function showVorschauNewMessage(r){
+        var string = '<div id="newMessagesShowDiV" style="display:none">'
+        for(var i=0;i<r['count'];i++){
+            string += '<p id="message'+r[i]['id']+'"class="newUnreadMessage">'
+            string +=   r[i]['vorname'] + ' ' + r[i]['nachname'];
+            string += '</p>'
+        }
+        string += '</div>';
+        $('#showNumber').append(string);
+        $('#newMessageDiv').unbind("click");
+        $('#newMessageDiv').click(function(){
+            $('#newMessagesShowDiV').toggle();
+        })
+    }
+    function openNewMessage(){
+        $('.newUnreadMessage').click(function(){
+
+
+        })
+    }
+
+
+})
+</script>

@@ -5,7 +5,8 @@ return array(
         'Application',
     	'DoctrineModule',
     	'DoctrineORMModule',
-    	'Kernel'	
+    	'Kernel',
+        'Chat'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

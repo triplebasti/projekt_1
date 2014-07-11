@@ -24,6 +24,7 @@ class KernelAPI
 				if ($user->getPassword() === $pw) {
 					if($user->getTempStatus() != 1){
 						$_SESSION['Userid'] = $user->getUserId();
+                        $this->setOnlineTrue($user);
 						return true;
 					} else {
 						throw new \Exception('Account ist noch nicht aktiv');
@@ -45,7 +46,6 @@ class KernelAPI
 	 * @return True or False, String
 	 */
 	public function createNewAcc($array){
-		$returnArray = array();
 		if($this->checkLogin($array['login'])){
 			$newAcc = new \Kernel\Entity\User();
 			$newAcc->setLogin($array['login']);
@@ -54,6 +54,7 @@ class KernelAPI
 			$newAcc->setNachname($array['nachname']);
 			$newAcc->setTempStatus(1);
             $newAcc->setRights(0);
+            $newAcc->setOnline(0);
 			$this->_objectManager->persist($newAcc);
 			$this->_objectManager->flush();
 			$this->_messageArrayForLoginStuff['check'] = true;
@@ -63,10 +64,7 @@ class KernelAPI
 		}
 		return $this->_messageArrayForLoginStuff;
 	}
-	
-	public function handleTags($input){
-		//Sp�ter
-	}
+
 	public function checkLogin($login){
 		$user = $this->_objectManager->getRepository('Kernel\Entity\User')->findoneby(array('Login'=>$login));
 		if (!isset($user)) {
@@ -184,5 +182,27 @@ class KernelAPI
             $returnArray['message'] = 'Keine Änderrung vorgenommen';
         }
         return $returnArray;
+    }
+
+    public function setOnlineTrue($userObject){
+        $userObject->setOnline(1);
+        $this->_objectManager->persist($userObject);
+        $this->_objectManager->flush();
+
+    }
+
+    public function setOnlineFalse(){
+        try{
+            $user = $this->_objectManager->getRepository('Kernel\Entity\User')->find($_SESSION['Userid']);
+            if(isset($user)){
+                $user->setOnline(0);
+                $this->_objectManager->persist($user);
+                $this->_objectManager->flush();
+            } else {
+                throw new \Exception('Bereits ausgeloggt');
+            }
+        }catch(\Exception $e){
+            echo $e;
+        }
     }
 }

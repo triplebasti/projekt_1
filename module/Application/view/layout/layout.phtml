@@ -50,7 +50,7 @@
 			<?php
 			if(isset($_SESSION['Userid']))
 					{?>
-			<a href="<?php echo $this->url('login') ?>">Logout</a>
+			<a id="logoutLink" href="<?php echo $this->url('login') ?>">Logout</a>
 			 <?php }?>
 		</div>
 		</div>
@@ -69,3 +69,11 @@
 	<?php echo $this->inlineScript() ?>
 </body>
 </html>
+<script>
+    $(document).ready(function(){
+        $('#logoutLink').click(function(){
+            $.post('/login/controllForLogout', {data: {
+            }})
+        })
+    })
+</script>

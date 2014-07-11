@@ -77,4 +77,12 @@ class KernelController extends AbstractActionController
         return new JsonModel($returnArray);
     }
 
+    public function controllForLogoutAction(){
+
+        $api = new \Kernel\Model\KernelAPI($this->getServiceLocator());
+        $api->setOnlineFalse();
+        unset($_SESSION['Userid']);
+        return new JsonModel();
+    }
+
 }
