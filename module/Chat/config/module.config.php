@@ -47,6 +47,16 @@ return array(
                     )
                 )
             ),
+            'chatGetMessage' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/login/chatroom/getMessage',
+                    'defaults' => array(
+                        'controller' => 'Chat\Controller\Chat',
+                        'action' => 'controllgetMessage',
+                    )
+                )
+            ),
 
         )
     ),

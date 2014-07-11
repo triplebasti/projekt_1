@@ -51,7 +51,7 @@ class Chat
      * @ORM\Column(type="integer")
      */
     
-    protected $Read;
+    protected $ReadMessage;
     
     /**
      * @ORM\Column(type="string")
@@ -120,7 +120,7 @@ class Chat
      */
     public function setRead($Read)
     {
-        $this->Read = $Read;
+        $this->ReadMessage = $Read;
     }
 
     /**
@@ -128,7 +128,7 @@ class Chat
      */
     public function getRead()
     {
-        return $this->Read;
+        return $this->ReadMessage;
     }
 
     /**

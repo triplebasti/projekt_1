@@ -33,4 +33,14 @@ class ChatController extends AbstractActionController
         $returnArray = $api->findAllNewMessages();
         return new JsonModel($returnArray);
     }
+    public function controllgetMessageAction(){
+        $post = $this->getRequest()->getPost();
+        $returnArray = array();
+        if (isset($post['data']['index'])) {
+            $api = new \Chat\Model\ChatAPI($this->getServiceLocator());
+            $returnArray = $api->getMessage($post['data']['index']);
+        }
+
+        return new JsonModel($returnArray);
+    }
 }

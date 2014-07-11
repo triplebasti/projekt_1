@@ -8,10 +8,33 @@
 <div  id="newMessageDiv" style="position: absolute;left: 600px;background-color: cornflowerblue">
 <tab><span>Neue Nachrichten:</span> <span id="showNumber">0</span></tab>
 </div>
+
+<div id="messanger" title="Messanger">
+<div id="verlauf" style="width: 80%;height: 50%;margin-top: 20px;margin-left: 40px;margin-right: 40px;background-color: #dcdcdc"></div>
+<div><textarea id="writenNewMessage" style="resize:none;position: relative;bottom: -30px;left: 40px;width: 80%;height: 110px"></textarea></div>
+<button style="width: 80%; height: 30px;margin-left: 40px;position: relative; bottom: -32px">Senden</button>
+
+</div>
 <script>
 $(document).ready(function(){
 
     var myVar = setInterval(function(){searchOnlineUser()}, 5000);
+
+    $( "#messanger" ).dialog({
+        width: 450,
+        height: 500,
+        autoOpen: false,
+        show: {
+            effect: "blind",
+            duration: 100
+        },
+        hide: {
+            effect: "explode",
+            duration: 100
+
+        }
+    });
+
 
     $('#loadNewMessage').click(function(){
         getNewMessages();
@@ -54,12 +77,13 @@ $(document).ready(function(){
     function showVorschauNewMessage(r){
         var string = '<div id="newMessagesShowDiV" style="display:none">'
         for(var i=0;i<r['count'];i++){
-            string += '<p id="message'+r[i]['id']+'"class="newUnreadMessage">'
+            string += '<p id="message_'+r[i]['id']+'"class="newUnreadMessage">'
             string +=   r[i]['vorname'] + ' ' + r[i]['nachname'];
             string += '</p>'
         }
         string += '</div>';
         $('#showNumber').append(string);
+        openNewMessage();
         $('#newMessageDiv').unbind("click");
         $('#newMessageDiv').click(function(){
             $('#newMessagesShowDiV').toggle();
@@ -67,7 +91,18 @@ $(document).ready(function(){
     }
     function openNewMessage(){
         $('.newUnreadMessage').click(function(){
-
+            var idString = $(this).prop('id');
+            var id = idString.split('_');
+            $.post('/login/chatroom/getMessage', {data: {
+                index: id[1]
+            }}).success(function(r){
+                var verlaufstring = '<p>';
+                verlaufstring += r['vorname'] + ' ' + r['nachname'] + ' : ' + r['message'];
+                verlaufstring += '</p>'
+                $('#verlauf').html(verlaufstring);
+                $( "#messanger" ).dialog( "open" );
+                getNewMessages();
+            })
 
         })
     }

@@ -36,7 +36,7 @@ class ChatAPI
     public function findAllNewMessages(){
         $returnArray = array();
         $this->_userArray = $this->_objectManager->getRepository('Kernel\Entity\Chat')
-            ->findBy(array('EmpfaengerId'=>$_SESSION['Userid'],'Read'=>0));
+            ->findBy(array('EmpfaengerId'=>$_SESSION['Userid'],'ReadMessage'=>0));
         $this->_counter = count($this->_userArray);
         $returnArray['count'] = $this->_counter;
         for ($i=0; $i < $this->_counter; $i++) {
@@ -46,5 +46,21 @@ class ChatAPI
             $returnArray[$i]['nachname'] = $senderObject->getNachName();
         }
         return $returnArray;
+    }
+
+    public function getMessage($id){
+        $messageObject = $this->_userArray = $this->_objectManager->getRepository('Kernel\Entity\Chat')->find($id);
+        $returnArray = array();
+        $returnArray['test'] = 'test';
+        $sender = $this->_userArray = $this->_objectManager->getRepository('Kernel\Entity\User')
+            ->find($messageObject->getSenderId());
+        $returnArray['vorname'] = $sender->getVorname();
+        $returnArray['nachname'] = $sender->getNachname();
+        $returnArray['message'] = $messageObject->getNachricht();
+        $messageObject->setRead('1');
+        $this->_objectManager->persist($messageObject);
+        $this->_objectManager->flush();
+        return $returnArray;
+
     }
 }
