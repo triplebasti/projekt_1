@@ -10,16 +10,16 @@
 </div>
 
 <div id="messanger" title="Messanger">
-<div id="verlauf" style="width: 80%;height: 50%;margin-top: 20px;margin-left: 40px;margin-right: 40px;background-color: #dcdcdc"></div>
-<div><textarea id="writenNewMessage" style="resize:none;position: relative;bottom: -30px;left: 40px;width: 80%;height: 110px"></textarea></div>
-<button id="sendMessageButton"style="width: 80%; height: 30px;margin-left: 40px;position: relative; bottom: -32px">Senden</button>
-
+    <div id="verlauf" style="width: 80%;height: 50%;margin-top: 20px;margin-left: 40px;margin-right: 40px;background-color: #dcdcdc"></div>
+    <div><textarea id="writenNewMessage" style="resize:none;position: relative;bottom: -30px;left: 40px;width: 80%;height: 110px"></textarea></div>
+    <button id="sendMessageButton"style="width: 80%; height: 30px;margin-left: 40px;position: relative; bottom: -32px">Senden</button>
 </div>
 <script>
 $(document).ready(function(){
-
+    var global_Sender = ' ';
+    var intervallCount = 0;
     var myVar = setInterval(function(){searchOnlineUser()}, 5000);
-
+    var myDialog;
     $( "#messanger" ).dialog({
         width: 450,
         height: 500,
@@ -35,11 +35,11 @@ $(document).ready(function(){
         }
     });
 
-
     $('#loadNewMessage').click(function(){
         getNewMessages();
     })
     function searchOnlineUser(){
+
         $.post('/login/chatroom/controllUser', {data: {
         }}).success(function(r){
             var string = ' ';
@@ -53,17 +53,27 @@ $(document).ready(function(){
             }
             $('#onlineArea').html(string);
             startClickEvent();
+            if(global_Sender != ' ' && $("#messanger").dialog( "isOpen" ) && intervallCount == 0){
+                myDialog = setInterval(function(){makeDialoge()}, 1000);
+                intervallCount = 1;
+            }
+            if((!$("#messanger").dialog( "isOpen" )) && intervallCount == 1){
+                clearInterval(myDialog);
+                intervallCount = 0;
+            }
         })
     }
 
     function startClickEvent(){
         $('.aktiveUserForChat').click(function(){
+            $('#verlauf').html(' ');
             var idString = $(this).prop('id');
             var id = idString.split('_');
             var r = [];
             r['id'] = 0;
             r['empfaengerId'] = id[1];
             $( "#messanger" ).dialog( "open" );
+            global_Sender = r['empfaengerId'];
             $('#sendMessageButton').unbind('click');
             $('#sendMessageButton').click(function(){
                 setNewMessages(r);
@@ -112,6 +122,7 @@ $(document).ready(function(){
                 verlaufstring += '</p>'
                 $('#verlauf').html(verlaufstring);
                 $( "#messanger" ).dialog( "open" );
+                global_Sender = r['empfaengerId'];
                 getNewMessages();
                 $('#sendMessageButton').unbind('click');
                 $('#sendMessageButton').click(function(){
@@ -135,6 +146,26 @@ $(document).ready(function(){
             message: inputString
         }})
     }
+
+    function makeDialoge(){
+      var sender = global_Sender;
+      var oldString = $('#verlauf').html();
+      var newString = oldString;
+      $.post('/login/chatroom/makeDialog', {data: {
+            index: 1,
+            sender: sender
+        }}).success(function(r){
+            if(r['count']>0){
+                for(var i=0;i<r['count'];i++){
+                newString += '<p>';
+                newString += r['vorname'] + ' ' + r['nachname'] + ' : ' + r[i]['message'];
+                newString +='</p>';
+            }
+                $('#verlauf').html(newString);
+            }
+        })
+    }
+
 
 
 })

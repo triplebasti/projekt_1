@@ -51,7 +51,6 @@ class ChatAPI
     public function getMessage($id){
         $messageObject = $this->_userArray = $this->_objectManager->getRepository('Kernel\Entity\Chat')->find($id);
         $returnArray = array();
-        $returnArray['test'] = 'test';
         $sender = $this->_userArray = $this->_objectManager->getRepository('Kernel\Entity\User')
             ->find($messageObject->getSenderId());
         $returnArray['vorname'] = $sender->getVorname();
@@ -75,5 +74,33 @@ class ChatAPI
         $newMessage->setRead(0);
         $this->_objectManager->persist($newMessage);
         $this->_objectManager->flush();
+    }
+
+    public function loadDialog($sender){
+        $returnArray = array();
+        $this->_userArray = $this->_objectManager->getRepository('Kernel\Entity\Chat')
+            ->findBy(array(
+                'ReadMessage'=>0,
+                'EmpfaengerId'=>$_SESSION['Userid'],
+                'SenderId' => $sender
+            ));
+        $sender = $this->_objectManager->getRepository('Kernel\Entity\User')
+            ->find($sender);
+        $returnArray['testId'] = $_SESSION['Userid'];
+        $returnArray['vorname'] = $sender->getVorname();
+        $returnArray['nachname'] = $sender->getNachname();
+        $counter = count($this->_userArray);
+        $id = 0;
+        if($counter>0){
+            foreach($this->_userArray AS $chat){
+            $returnArray[$id]['message'] = $chat->getNachricht();
+                $chat->setRead(1);
+                $this->_objectManager->persist($chat);
+                $this->_objectManager->flush();
+                $id++;
+            }
+        }
+        $returnArray['count'] = $id;
+        return $returnArray;
     }
 }

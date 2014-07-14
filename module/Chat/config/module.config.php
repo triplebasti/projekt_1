@@ -67,6 +67,16 @@ return array(
                     )
                 )
             ),
+            'chatMakeDialog' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/login/chatroom/makeDialog',
+                    'defaults' => array(
+                        'controller' => 'Chat\Controller\Chat',
+                        'action' => 'controllMakeDialog',
+                    )
+                )
+            ),
 
         )
     ),
